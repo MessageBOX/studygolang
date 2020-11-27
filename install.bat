@@ -8,18 +8,14 @@ goto end
 
 :ok
 
-set OLDGOPATH=%GOPATH%
-set GOPATH=%~dp0
+set GOPROXY=https://goproxy.cn
+set GO111MODULE=on
 
 if not exist log mkdir log
 
-gofmt -w src
+gofmt -w -s .
 
-go install server/studygolang
-go install server/indexer
-go install server/crawler
-
-set GOPATH=%OLDGOPATH%
+go build -o bin/studygolang.exe github.com/studygolang/studygolang/cmd/studygolang
 
 :end
 echo finished

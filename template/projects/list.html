@@ -1,13 +1,10 @@
 {{define "title"}}开源项目 {{end}}
-{{define "seo"}}<meta name="keywords" content="开源项目, Go语言开源项目, Go语言博文, Go语言, Golang, Go中文社区,Golang中文社区, Go语言社区, Go语言学习园地">
-<meta name="description" content="Go语言中文网，收集了Go语言的大部分知名开源项目，有项目的介绍，甚至有网友对开源项目的解读">{{end}}
 {{define "content"}}
-<div class="row banner">
-</div>
 <div class="row">
-	<div class="col-lg-9 col-md-8 col-sm-7">
+	<div class="col-md-9 col-sm-6">
+		<div class="sep20"></div>
 		<ol class="breadcrumb">
-			<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+			<li><a href="/">首页</a></li>
 			<li class="active">开源项目</li>
 		</ol>
 		{{range .projects}}
@@ -39,10 +36,10 @@
 					</a>
 					{{if $.likeflags}}
 					{{$likeFlag := index $.likeflags .Id}}
-					<a href="#" class="like{{if $likeFlag}} hadlike{{end}}" title="{{if $likeFlag}}取消喜欢{{else}}我喜欢{{end}}" data-objid="{{.Id}}" data-objtype="1" data-flag="{{if $likeFlag}}{{$likeFlag}}{{else}}0{{end}}">
+					<a href="#" class="like{{if $likeFlag}} hadlike{{end}}" title="{{if $likeFlag}}取消喜欢{{else}}我喜欢{{end}}" data-objid="{{.Id}}" data-objtype="4" data-flag="{{if $likeFlag}}{{$likeFlag}}{{else}}0{{end}}">
 						<i class="glyphicon glyphicon-heart{{if not $likeFlag}}-empty{{end}}"></i>
 					{{else}}
-					<a href="#" class="like" title="我喜欢" data-objid="{{.Id}}" data-objtype="1" data-flag="0">
+					<a href="#" class="like" title="我喜欢" data-objid="{{.Id}}" data-objtype="4" data-flag="0">
 						<i class="glyphicon glyphicon-heart-empty"></i>
 					{{end}}
 						<span class="likenum">{{.Likenum}}</span>人喜欢
@@ -50,63 +47,44 @@
 				</div>
 			</div>
 		</article>
+		{{else}}
+		<article class="article box_white">
+			<div class="row">暂无开源项目，<a class="btn btn-default btn-sm" href="/project/new">发布一个</a></div>
+		</article>
 		{{end}}
-		<ul class="pager">
-			{{if .page.has_prev}}
-			<li class="previous"><a href="/projects?lastid={{.page.prev_id}}">&larr; 上一页</a></li>
-			{{end}}
-			{{if .page.has_next}}
-			<li class="next"><a href="/projects?lastid={{.page.next_id}}">下一页 &rarr;</a></li>
-			{{end}}
-		</ul>
-	</div>
-	<div class="col-lg-3 col-md-4 col-sm-5">
-		<div class="row box_white sidebar">
-			<div class="top">
-				<h3 class="title"><i class="glyphicon glyphicon-list"></i>&nbsp;<a href="/articles" target="_blank" title="点击更多">最新博文</a></h3>
-			</div>
-			<div class="sb-content">
-				<div class="article-list" data-limit="10">
-					<ul class="list-unstyled">
-						<img src="/static/img/loaders/loader7.gif" alt="加载中" />
-					</ul>
+        <div class="sep20"></div>
+		{{if .page}}
+			<div class="box_white">
+				<div class="inner_content">
+					<nav class="text-center"><ul class="pagination pagination-sm" style="margin: 1px 0;">{{.page}}</ul></nav>
 				</div>
+			</div>
+		{{end}}
+	</div>
+	<div class="col-md-3 col-sm-6">
+		<div class="sep20"></div>
+		
+		<div class="box_white sidebar">
+			<div class="sb-content text-center" style="padding: 15px 0;">
+				<a href="/project/new" class="btn btn-default">发布项目</a>
 			</div>
 		</div>
 
-		<div class="row box_white sidebar">
-			<script type="text/javascript">
-			var cpro_id="u1996895";
-			(window["cproStyleApi"] = window["cproStyleApi"] || {})[cpro_id]={at:"3",rsi0:"291",rsi1:"291",pat:"6",tn:"baiduCustNativeAD",rss1:"#FFFFFF",conBW:"0",adp:"1",ptt:"0",titFF:"%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91",titFS:"14",rss2:"#000000",titSU:"0",ptbg:"90",piw:"0",pih:"0",ptp:"0"}
-			</script>
-			<script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
-		</div>
+		{{include "common/my_info.html" .}}
+
+		{{include "sidebar/article.html" .}}
 		
-		<div class="row box_white sidebar">
-			<div class="top">
-				<ul class="list-inline text-center">
-					<li class="first"><a href="/topics" target="_blank" class="cur" title="点击更多">最新主题</a>|</li>
-					<li class="second"><a href="/resources" target="_blank" title="点击更多">最新资源</a>|</li>
-					<li class="last"><a href="javascript:;">最新评论</a></li>
-				</ul>
-				<p class="bar"></p>
-			</div>
-			<div class="sb-content">
-				<div class="topic-list first">
-					<ul class="list-unstyled">
-						<img src="/static/img/loaders/loader7.gif" alt="加载中" />
-					</ul>
-				</div>
-				<div class="resource-list second hidden">
-					<ul class="list-unstyled">
-					</ul>
-				</div>
-				<div class="cmt-list last hidden">
-					<ul class="list-unstyled">
-					</ul>
-				</div>
-			</div>
+		{{if .pos_ad.right1}}
+		<div class="box_white sidebar" id="ad-right1">
+			{{if eq .pos_ad.right1.AdType 0}}
+				{{noescape .pos_ad.right1.Code}}
+			{{end}}
 		</div>
+		{{end}}
+
+		{{include "sidebar/view_rank.html" (parseJSON `{"rank_title":"今日阅读排行","objtype":4,"limit":10,"rank_type":"today"}`)}}
+
+		{{include "sidebar/view_rank.html" (parseJSON `{"rank_title":"一周阅读排行","objtype":4,"limit":10,"rank_type":"week"}`)}}
 
 	</div>
 </div>
@@ -115,10 +93,15 @@
 <script type="text/javascript">
 // 需要加载的侧边栏
 SG.SIDE_BARS = [
-	"/topics/recent",
-	"/resources/recent",
-	"/comments/recent",
+	"/rank/view",
 	"/articles/recent"
 ];
 </script>
+
+{{if .pos_ad.right1}}
+	{{if eq .pos_ad.right1.AdType 1}}
+		{{noescape .pos_ad.right1.Code}}
+	{{end}}
+{{end}}
+
 {{end}}

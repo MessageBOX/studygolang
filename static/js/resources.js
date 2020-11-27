@@ -3,7 +3,7 @@
 	emojify.setConfig({
 		// emojify_tag_type : 'span',
 		only_crawl_id    : null,
-		img_dir          : 'http://www.emoji-cheat-sheet.com/graphics/emojis',
+		img_dir          : SG.EMOJI_DOMAIN,
 		ignored_tags     : { //忽略以下几种标签内的emoji识别
 			'SCRIPT'  : 1,
 			'TEXTAREA': 1,
@@ -18,7 +18,7 @@
 	SG.Resources.prototype.parseContent = function(selector) {
 		var markdownString = selector.text();
 		// 配置 marked 语法高亮
-		marked = SG.markSetting();
+		marked = SG.markSettingNoHightlight();
 		var contentHtml = marked(markdownString);
 		contentHtml = SG.replaceCodeChar(contentHtml);
 		selector.html(contentHtml);
@@ -75,4 +75,4 @@
 		
 		SG.registerAtEvent(false, true);
 	});
-}).call(this)
+}).call(this);

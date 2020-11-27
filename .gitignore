@@ -11,9 +11,12 @@ pkg
 bin
 log
 pid
-data
 sitemap
 assets
+
+node_modules
+
+.vscode
 
 # Architecture specific extensions/prefixes
 *.[568vq]
@@ -33,6 +36,7 @@ _testmain.go
 
 *.sublime-project
 *.sublime-workspace
+*.idea
 
 notes.md
 
@@ -41,5 +45,9 @@ studygolang_data.sql
 welcome.png
 
 *.json
+!package.json
 
 .DS_Store
+/env.ini
+ssl
+bin

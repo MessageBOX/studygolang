@@ -1,20 +1,37 @@
 {{define "title"}}注册新会员 {{end}}
-{{define "seo"}}<meta name="keywords" content="会员, 注册新会员, Go语言, Golang, Go中文社区,Golang中文社区, Go语言社区, Go语言学习园地">
-<meta name="description" content="中国 Golang 社区，Go语言学习园地，致力于构建完善的 Golang 中文社区，Go语言爱好者的学习家园。完全Go语言实现。">{{end}}
 {{define "content"}}
 <div class="row banner">
 </div>
 <div class="row">
 	<div class="col-lg-9 col-md-8 col-sm-7">
 		<ol class="breadcrumb">
-			<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+			<li><a href="/">首页</a></li>
 			<li><a href="/users">会员</a></li>
 			<li class="active">注册新会员</li>
 		</ol>
 		<div class="box_white">
-			{{if .success}}
+		{{if .success}}
 			{{.success}}
-			{{else}}
+			<div class="text-center">
+				<div>如果没有收到激活邮件，可以关注站长公众号，回复<span style="color:red;">{{.username}}</span>获取验证码来激活</div>
+				<div>
+					<img src="{{.static_domain}}/static/img/polarisxu-qrcode-m.jpg?imageView2/2/w/140" alt="" width="140px">
+				</div>
+				<form class="form-horizontal" action="/account/wechat_active" method="POST" data-redirect="/">
+					<div class="form-group form-group-sm">
+						<label class="col-sm-4 control-label" for="captchaSolution"></label>
+						<div class="col-sm-4">
+							<input class="form-control" type="text" id="captchaSolution" name="captcha" placeholder="请输入公众号收到的验证码" >
+						</div>
+					</div>
+					<div class="form-group form-group-sm">
+						<div class="col-sm-offset-3 col-sm-6">
+							<button type="submit" id="active-submit" class="btn btn-success btn-sm">激活</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		{{else}}
 			<form class="form-horizontal validate-form" role="form" action="/account/register" method="POST" data-redirect="/">
 				<fieldset>
 					<legend>注册新用户</legend>
@@ -58,14 +75,35 @@
 				</fieldset>
 				<div class="form-group form-group-sm">
 					<div class="col-sm-offset-4 col-sm-6">
-						<button type="submit" id="register-submit" class="btn btn-default btn-sm">注册</button>
+						<button type="submit" id="register-submit" class="btn btn-success btn-sm">注册</button>
 					</div>
 				</div>
 			</form>
-			{{end}}
+		{{end}}
 		</div>
 	</div>
 	<div class="col-lg-3 col-md-4 col-sm-5">
+		<div class="row box_white sidebar">
+			<div class="top">
+				<h3 class="title"><i class="glyphicon glyphicon-user"></i>&nbsp;第三方账号登录</h3>
+			</div>
+			<div class="sb-content">
+				<ul class="list-unstyled third-login">
+					<li>
+						<a href="/oauth/github/login" class="btn btn-success btn-block">
+						<i class="fa fa-github" aria-hidden="true"></i>
+						GitHub
+						</a>
+					</li>
+					<li>
+						<a href="/oauth/gitea/login" class="btn btn-success btn-block">
+						<i class="fa fa-github" aria-hidden="true"></i>
+						Gitea
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
 		<div class="row box_white sidebar">
 			<div class="top">
 				<h3 class="title"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;已经有帐号了？</h3>
@@ -81,13 +119,14 @@
 </div>
 {{end}}
 {{define "css"}}
-<link href="/static/css/user.css" media="screen" rel="stylesheet" type="text/css">
+<style>
+.third-login li { margin-bottom: 10px; }
+</style>
 {{end}}
 {{define "js"}}
-<script	type="text/javascript" src="/static/js/libs/jquery.validate.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/jquery.metadata.js"></script>
-<script	type="text/javascript" src="/static/js/libs/jquery.validate.msg.cn.js"></script>
-<script type="text/javascript" src="/static/js/account.js"></script>
+
+{{include "cssjs/publish.js.html" .}}
+<script type="text/javascript" src="{{.static_domain}}/static/dist/js/account.min.js"></script>
 <script type="text/javascript">
 $(function(){
 	$('#resend_email').on('click', function(){
@@ -97,6 +136,42 @@ $(function(){
 				comTip(result.msg);
 			} else {
 				comTip(result.error);
+			}
+		});
+	});
+
+	$('#active-submit').on('click', function(evt){
+		$(this).attr("disabled", "disabled");
+		evt.preventDefault();
+
+		let $form = $('.active-form'),
+				data = $form.serialize(),
+				url = $form.attr('action'),
+				that = this;
+
+		$.ajax({
+			type:"post",
+			url: url,
+			data: data,
+			dataType: 'json',
+			success: function(result){
+				$(that).removeAttr("disabled");
+				if(result.ok){
+					comTip("激活成功");
+					setTimeout(function(){
+						var redirect = $form.data('redirect');
+						if (redirect) {
+							window.location.href = redirect;
+						}
+					}, 1000);
+				}else{
+					comTip(result.error);
+				}
+			},
+			error:function(xmlReq, textStatus, errorThrown){
+				if (xmlReq.status == 403) {
+					comTip("没有操作权限");
+				}
 			}
 		});
 	});

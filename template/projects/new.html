@@ -1,13 +1,10 @@
 {{define "title"}}{{if .project.Id}}修改{{else}}发布{{end}}项目 {{end}}
-{{define "seo"}}<meta name="keywords" content="开源项目, Go语言开源项目, Go语言博文, Go语言, Golang, Go中文社区,Golang中文社区, Go语言社区, Go语言学习园地">
-<meta name="description" content="Go语言中文网，收集了Go语言的大部分知名开源项目，有项目的介绍，甚至有网友对开源项目的解读">{{end}}
 {{define "content"}}
-<div class="row banner">
-</div>
 <div class="row">
-	<div class="col-lg-9 col-md-8 col-sm-7">
+	<div class="col-md-9 col-sm-6">
+		<div class="sep20"></div>
 		<ol class="breadcrumb">
-			<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+			<li><a href="/">首页</a></li>
 			<li><a href="/projects">开源项目</a></li>
 			<li class="active">{{if .project.Id}}修改{{else}}添加{{end}}项目</li>
 		</ol>
@@ -119,6 +116,20 @@
 					</div>
 					<i class="glyphicon glyphicon-eye-open preview" title="预览" style="cursor:pointer;"></i><span class="help-block">支持Markdowm</span>
 				</div>
+				{{if .captchaId}}
+				<div class="form-group form-group-sm">
+					<label class="col-sm-3 control-label" for="captchaSolution">验证码</label>
+					<div class="col-sm-4">
+						<input type="hidden" name="captchaid" value="{{.captchaId}}">
+						<div class="input-group">
+							<input type="text" id="captchaSolution" name="captchaSolution" class="form-control" placeholder="请输入右侧验证码" />
+							<span class="input-group-btn">
+								<img id="reload-captcha" src="/captcha/{{.captchaId}}.png" alt="验证码" title="看不清，点击" />
+							</span>
+						</div>
+					</div>
+				</div>
+				{{end}}
 				<div class="form-group form-group-sm">
 					<label class="col-sm-6 control-label">&nbsp;</label>
 					<div class="col-sm-6">
@@ -128,16 +139,10 @@
 			</form>
 		</div>
 	</div>
-	<div class="col-lg-3 col-md-4 col-sm-5">
-		<div class="row box_white sidebar">
-			<script type="text/javascript">
-			var cpro_id="u1996895";
-			(window["cproStyleApi"] = window["cproStyleApi"] || {})[cpro_id]={at:"3",rsi0:"291",rsi1:"291",pat:"6",tn:"baiduCustNativeAD",rss1:"#FFFFFF",conBW:"0",adp:"1",ptt:"0",titFF:"%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91",titFS:"14",rss2:"#000000",titSU:"0",ptbg:"90",piw:"0",pih:"0",ptp:"0"}
-			</script>
-			<script src="http://cpro.baidustatic.com/cpro/ui/c.js" type="text/javascript"></script>
-		</div>
+	<div class="col-md-3 col-sm-6">
+		<div class="sep20"></div>
 
-		<div class="row box_white sidebar">
+		<div class="box_white sidebar">
 			<div class="top">
 				<ul class="list-inline text-center">
 					<li class="first"><a href="/topics" target="_blank" class="cur" title="点击更多">最新主题</a>|</li>
@@ -166,22 +171,14 @@
 </div>
 {{end}}
 {{define "css"}}
-<link href="/static/css/highlight/default.css" media="screen" rel="stylesheet" type="text/css">
-<link href="/static/css/Huploadify.css" media="screen" rel="stylesheet" type="text/css">
 <style type="text/css">
 .uploadify-button {margin:0px;}
 </style>
 {{end}}
 {{define "js"}}
-<script	type="text/javascript" src="/static/js/libs/jquery.autogrowtextarea.min.js"></script>
-<script	type="text/javascript" src="/static/js/libs/jquery.validate.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/jquery.metadata.js"></script>
-<script	type="text/javascript" src="/static/js/libs/jquery.validate.msg.cn.js"></script>
-<script type="text/javascript" src="/static/js/libs/marked.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/highlight.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/jquery.Huploadify.js"></script>
-<script type="text/javascript" src="/static/js/upload.js?v=1.0"></script>
-<script type="text/javascript" src="/static/js/projects.js?v=1.0"></script>
+
+{{include "cssjs/publish.js.html" .}}
+<script type="text/javascript" src="{{.static_domain}}/static/dist/js/projects.min.js"></script>
 <script type="text/javascript">
 // 需要加载的侧边栏
 SG.SIDE_BARS = [

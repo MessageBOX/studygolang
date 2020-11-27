@@ -3,7 +3,7 @@
 	emojify.setConfig({
 		// emojify_tag_type : 'span',
 		only_crawl_id    : null,
-		img_dir          : 'http://www.emoji-cheat-sheet.com/graphics/emojis',
+		img_dir          : SG.EMOJI_DOMAIN,
 		ignored_tags     : { //忽略以下几种标签内的emoji识别
 			'SCRIPT'  : 1,
 			'TEXTAREA': 1,
@@ -16,16 +16,20 @@
 	SG.Topics = function(){}
 	SG.Topics.prototype = new SG.Publisher();
 	SG.Topics.prototype.parseContent = function(selector) {
-		var markdownString = SG.preProcess(selector.text());
 		// 配置 marked 语法高亮
-		marked = SG.markSetting();
+		marked = SG.markSettingNoHightlight();
 
-		var contentHtml = marked(markdownString);
-		contentHtml = SG.replaceCodeChar(contentHtml);
-		selector.html(contentHtml);
+		selector.each(function() {
+			var markdownString = $(this).text();
 
-		// emoji 表情解析
-		emojify.run(selector.get(0));
+			var contentHtml = marked(markdownString);
+			contentHtml = SG.replaceCodeChar(contentHtml);
+			
+			$(this).html(contentHtml);
+
+			// emoji 表情解析
+			emojify.run(this);
+		});
 	}
 
 	jQuery(document).ready(function($) {
@@ -43,7 +47,17 @@
 			}
 
 			var topics = new SG.Topics();
-			topics.publish(this);
+			topics.publish(this, function(data) {
+				purgeComposeDraft(uid, 'topic');
+
+				setTimeout(function(){
+					if (data.tid) {
+						window.location.href = '/topics/'+data.tid;
+					} else {
+						window.location.href = '/topics';
+					}
+				}, 1000);
+			});
 		});
 
 		$(document).keypress(function(evt){
@@ -54,4 +68,4 @@
 
 		SG.registerAtEvent();
 	});
-}).call(this)
+}).call(this);

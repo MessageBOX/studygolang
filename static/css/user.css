@@ -1,11 +1,12 @@
 .userinfo { padding:10px; }
+.userinfo .user-prosign {width: 80px;position: absolute;z-index: 2;right: 20px;top: 105px;background-color: #6f42c1;border-radius: 2px;box-shadow: inset 0 -1px 0 rgba(27, 31, 35, 0.12);color: #fff;display: inline-block;font-weight: 600;line-height: 1;padding: 3px 4px;text-align: center; opacity: 0.8; }
 .userinfo .pull-right { width:80px; }
 .userinfo .pull-right a.btn { margin: 5px 10px 0px 4px; }
 .userinfo ul {}
 .userinfo ul li {font-size: 14px;line-height: 180%;border-bottom: 1px dashed #eee;}
 .userinfo ul li label {color: #999;font-size: 12px;margin-right: 8px;display: inline-block;width: 100px;text-align: right;}
 
-.recent .title {font-size: 12px;padding: 10px;margin-bottom: 8px;color: #999;line-height: 100%;border-bottom: 1px solid #ddd;padding-bottom: 8px;}
+.recent .title {margin-top: 0px;font-size: 14px; padding: 10px;margin-bottom: 8px;line-height: 24px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 8px;}
 
 .recent-topics {}
 .recent-topics ul {margin: 0; padding: 0 10px 10px 10px;}

@@ -34,7 +34,7 @@ jQuery(document).ready(function($){
 					jQuery(this).attr('selected',false);
 					sel1.append(jQuery(this));
 				}
-			});		
+			});
 		}
 	});
 	
@@ -104,6 +104,7 @@ jQuery(document).ready(function($){
 					jAlert("操作成功", "信息");
 				} else {
 					jAlert(data.error, "出错");
+					return;
 				}
 				// $('#tooltip').text("操作成功！");
 				if (typeof formSuccCallback !== "undefined") {

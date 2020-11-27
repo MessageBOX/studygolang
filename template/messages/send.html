@@ -1,12 +1,10 @@
 {{define "title"}}发送消息 {{end}}
-{{define "seo"}}<meta name="keywords" content="发送消息, Go语言开源项目, Go语言博文, Go语言, Golang, Go中文社区,Golang中文社区, Go语言社区, Go语言学习园地">
-<meta name="description" content="Go中文社区，Golang中国，Go语言学习园地，提供一个Go爱好者交流的中文平台">{{end}}
 {{define "content"}}
 <div class="row banner">
 </div>
 <div class="row">
 	<ol class="breadcrumb">
-		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+		<li><a href="/">首页</a></li>
 		<li><a href="/message/system">消息</a></li>
 		<li class="active">发送消息</li>
 	</ol>
@@ -14,10 +12,15 @@
 		<form class="form-horizontal validate-form" role="form" action="/message/send" data-redirect="/message/outbox" method="post">
 			<input type="hidden" name="to" value="{{.user.Uid}}" />
 			<div class="form-group form-group-sm">
-				<label class="col-lg-2 col-md-3 col-sm-4 control-label" for="title"><abbr>*</abbr>发给</label>
+				<label class="col-lg-2 col-md-3 col-sm-4 control-label" for="title"><abbr>*</abbr>{{if .message}}回复{{else}}发给{{end}}</label>
 				<div class="col-lg-10 col-md-9 col-sm-8">
 					<div class="row" style="margin-top:5px;">
-						<div class="col-sm-10"><a href="/user/{{.user.Username}}" title="{{.user.Username}}" target="_blank">{{.user.Username}}{{if .user.Name}}({{.user.Name}}){{end}}</a></div>
+						<div class="col-sm-10">
+							<a href="/user/{{.user.Username}}" title="{{.user.Username}}" target="_blank">{{.user.Username}}{{if .user.Name}}({{.user.Name}}){{end}}</a>
+							{{if .message}}
+								：{{.message.Content}}
+							{{end}}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -48,26 +51,12 @@
 </div>
 {{end}}
 {{define "css"}}
-<link href="/static/css/jquery.atwho.min.css" rel="stylesheet">
-<link href="/static/css/highlight/default.css" media="screen" rel="stylesheet" type="text/css">
-<link href="/static/css/md_toolbar.css" media="screen" rel="stylesheet" type="text/css">
-<link href="/static/css/message.css" media="screen" rel="stylesheet" type="text/css">
 {{end}}
 {{define "js"}}
-<script type="text/javascript" src="/static/js/libs/jquery.autogrowtextarea.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/jquery.validate.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/jquery.metadata.js"></script>
-<script type="text/javascript" src="/static/js/libs/jquery.validate.msg.cn.js"></script>
-<script type="text/javascript" src="/static/js/libs/marked.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/highlight.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/jquery.caret.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/jquery.atwho.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/emojify.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/emojis.js"></script>
-<script type="text/javascript" src="/static/js/libs/plupload.full.min.js"></script>
-<script type="text/javascript" src="/static/js/md_toolbar.js"></script>
-<script type="text/javascript" src="/static/js/puploader.js?v=1.0"></script>
-<script type="text/javascript" src="/static/js/message.js"></script>
+
+{{include "cssjs/publish.js.html" .}}
+
+<script type="text/javascript" src="{{.static_domain}}/static/dist/js/message.min.js"></script>
 <script type="text/javascript">
 // 需要加载的侧边栏
 SG.SIDE_BARS = [];

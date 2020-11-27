@@ -1,17 +1,15 @@
 {{define "title"}}{{.user.Username}} 编辑个人信息 {{end}}
-{{define "seo"}}<meta name="keywords" content="会员, 个人信息, Go语言, Golang, Go中文社区,Golang中文社区, Go语言社区, Go语言学习园地">
-<meta name="description" content="中国 Golang 社区，Go语言学习园地，致力于构建完善的 Golang 中文社区，Go语言爱好者的学习家园。完全Go语言实现。">{{end}}
 {{define "content"}}
 <div class="row banner">
 </div>
 <div class="row">
 	<div class="col-lg-9 col-md-8 col-sm-7">
 		<ol class="breadcrumb">
-			<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+			<li><a href="/">首页</a></li>
 			<li><a href="/user/{{.user.Username}}">个人信息</a></li>
 			<li class="active">编辑</li>
 		</ol>
-		<div class="box_white">
+		<div class="box_white" id="setting">
 			<form class="form-horizontal validate-form" role="form" action="/account/edit">
 				<fieldset>
 					<legend>个人资料设置</legend>
@@ -59,7 +57,7 @@
 						<div class="col-sm-6">
 							<div class="input-group input-group-sm">
 								<span class="input-group-addon">https://github.com/</span>
-								<input type="text" id="github" class="form-control" placeholder="yourname" value="{{.user.Github}}">
+								<input type="text" id="github" name="github" class="form-control" placeholder="yourname" value="{{.user.Github}}">
 							</div>
 						</div>
 					</div>
@@ -68,7 +66,7 @@
 						<div class="col-sm-6">
 							<div class="input-group input-group-sm">
 								<span class="input-group-addon">http://weibo.com/</span>
-								<input type="text" id="weibo" class="form-control" placeholder="yourname" value="{{.user.Weibo}}">
+								<input type="text" id="weibo" name="weibo" class="form-control" placeholder="yourname" value="{{.user.Weibo}}">
 							</div>
 						</div>
 					</div>
@@ -102,44 +100,50 @@
 		<div class="box_white" id="change-avatar">
 			<div class="select-avatar">
 				<h4 class="title">头像</h4>
-				<p>本站使用<a href="http://www.qiniu.com/" target="_blank">七牛云存储</a>来提供头像服务.</p>
+				<p>本站使用 <a href="http://www.qiniu.com/" target="_blank">七牛云存储</a> 来提供头像服务.</p>
 				<p>
-					当前头像<img class="img-rounded" src="{{gravatar .user.Avatar .user.Email 120}}">
+					当前头像 <img class="img-rounded" src="{{gravatar .user.Avatar .user.Email 120 .is_https}}">
 				</p>
 				<p><a href="/account/change_avatar" class="btn btn-default btn-gravatar">使用Gravatar头像</a></p>
 				<ul class="nav nav-tabs" id="avatar-tab" role="tablist" style="margin-bottom: 15px;">
-					<li role="presentation" class="active"><a href="#default" role="tab" data-toggle="tab">选择默认头像</a></li>
-					<li role="presentation"><a href="#upload" role="tab" data-toggle="tab">上传头像</a></li>
+					{{if .default_avatars}}
+					<li role="presentation"><a href="#default" role="tab" data-toggle="tab">选择默认头像</a></li>
+					{{end}}
+					<li role="presentation" class="active"><a href="#upload" role="tab" data-toggle="tab">上传头像</a></li>
 				</ul>
 				<div class="tab-content">
-					<div id="default" class="tab-pane fade row-fluid active in" role="tabpanel">
+					{{if .default_avatars}}
+					<div id="default" class="tab-pane fade" role="tabpanel">
 						<form action="/account/change_avatar" method="post" class="validate-form" role="form" >
 							<div class="form-group">
 								<ul class="list-inline">
+								{{with $root := .}}
 									{{range .default_avatars}}
 									<li>
 										<label>
 											<input type="radio" name="avatar" value="{{.}}" class="required">
-											<img class="img-rounded" src="http://studygolang.qiniudn.com/avatar/{{.}}?imageView2/2/w/80" alt="{{.}}">
+											<img class="img-rounded" src="{{$root.cdn_domain}}/avatar/{{.}}?imageView2/2/w/80" alt="{{.}}">
 										</label>
 									</li>
 									{{end}}
+								{{end}}
 								</ul>
 							<div class="control-group">
 								<div class="controls text-center">
-									<button type="submit" class="btn btn-success btn-sm submit">保存</button>
+									<button type="submit" class="btn btn-default btn-sm submit">保存</button>
 								</div>
 							</div>
 							</div>
 						</form>
 					</div>
-					<div id="upload" class="tab-pane fade">
+					{{end}}
+					<div id="upload" class="tab-pane fade row-fluid active in" role="tabpanel">
 					<form action="/account/change_avatar" method="post" enctype="multipart/form-data" class="form-horizontal validate-form">
 						<input type="hidden" name="avatar" id="upload-avatar">
 						<div class="form-group">
 							<label class="control-label col-md-2" for="upload-img">选择图片文件</label>
 							<div class="col-md-2">
-								<button id="upload-img" class="btn btn-primary btn-sm">选择文件</button>
+								<button id="btn-upload-avatar" class="btn btn-default btn-sm">选择文件</button>
 							</div>
 							<span class="help-block">支持500K以内的jpg/png文件</span>
 						</div>
@@ -150,7 +154,7 @@
 						</div>
 						<div class="form-group">
 							<div class="col-md-offset-2 col-md-10">
-								<button type="submit" id="upload-btn" class="btn btn-success btn-sm submit" disabled>保存新头像</button>
+								<button type="submit" id="upload-btn" class="btn btn-default btn-sm submit" disabled>保存新头像</button>
 							</div>
 						</div>
 					</form>
@@ -159,16 +163,18 @@
 			</div>
 		</div>
 		<br>
-		<div class="box_white">
+		<div class="box_white" id="changepwd">
 			<form class="form-horizontal validate-form" role="form" action="/account/changepwd">
 				<fieldset>
-					<legend>修改密码</legend>
+					<legend>{{if .has_passwd}}修改{{else}}设置{{end}}密码</legend>
+					{{if .has_passwd}}
 					<div class="form-group form-group-sm">
 						<label class="col-sm-3 control-label" for="cur_password">旧密码</label>
 						<div class="col-sm-6">
 							<input class="form-control required" type="password" id="cur_password" name="cur_passwd" placeholder="旧密码">
 						</div>
 					</div>
+					{{end}}
 					<div class="form-group form-group-sm">
 						<label class="col-sm-3 control-label" for="passwd">新密码</label>
 						<div class="col-sm-6">
@@ -189,61 +195,87 @@
 				</div>
 			</form>
 		</div>
+		<br>
+		<div class="box_white" id="connection">
+			<div class="card-block select-avatar">
+				<h4 class="title">账号关联</h4>
+				<p>您可以使用以下社交账户登录 {{.setting.Name}}。如果您删除了全部关联的社交账户，您仍可以使用<span class="text-danger">已验证的邮箱</span>或者以下用户名登录{{.setting.Name}}：</p>
+				<p>您的用户名为：<span class="text-danger">{{.user.Username}}</span></p>
+
+				<form method="post" action="/account/social/unbind" id="unbind">
+					<fieldset>
+						<div>
+							{{range .bind_users}}
+							<label for="id_account_{{.Id}}">
+								<input id="id_account_{{.Id}}" type="radio" name="bind_id" value="{{.Id}}">
+								<span class="socialaccount_provider {{if eq .Type 0}}github{{end}}">{{if eq .Type 0}}GitHub{{end}}</span> {{.Name}}
+							</label>&nbsp;
+							{{end}}
+						</div>
+						{{if and .bind_users .has_passwd}}
+						<div>
+							<button class="btn btn-danger btn-sm" type="submit">删除</button>
+						</div>
+						{{end}}
+					</fieldset>
+				</form>
+				<hr>
+				<h5 class="mb-3">添加一个第三方账号</h5>
+
+				<ul class="socialaccount_providers list-unstyled list-inline">
+					<li class="list-inline-item">
+					  <a class="btn btn-default btn-sm" title="GitHub" href="/oauth/github/login?process=connect">GitHub</a>
+					</li>
+				</ul>
+			</div>
+		</div>
 	</div>
 	<div class="col-lg-3 col-md-4 col-sm-5">
 		
 		<div class="row box_white sidebar">
-			<div class="top">
-				<ul class="list-inline text-center">
-					<li class="first"><a href="/topics" target="_blank" class="cur" title="点击更多">最新主题</a>|</li>
-					<li class="second"><a href="/resources" target="_blank" title="点击更多">最新资源</a>|</li>
-					<li class="last"><a href="javascript:;">最新评论</a></li>
-				</ul>
-				<p class="bar"></p>
-			</div>
-			<div class="sb-content">
-				<div class="topic-list first">
-					<ul class="list-unstyled">
-						<img src="/static/img/loaders/loader7.gif" alt="加载中" />
-					</ul>
-				</div>
-				<div class="resource-list second hidden">
-					<ul class="list-unstyled">
-					</ul>
-				</div>
-				<div class="cmt-list last hidden">
-					<ul class="list-unstyled">
-					</ul>
-				</div>
-			</div>
+			<ul class="list-group mt-3">
+				<li class="list-group-item">
+					<a href="#setting">
+						<i class="fa fa-address-card-o mr-2" aria-hidden="true"></i> 资料设置
+					</a>
+				</li>
+				<li class="list-group-item">
+					<a href="#change-avatar">
+						<i class="fa fa-user-circle mr-2" aria-hidden="true"></i> 修改头像
+					</a>
+				</li>
+				<li class="list-group-item">
+					<a href="#changepwd">
+						<i class="fa fa-key mr-2" aria-hidden="true"></i> 修改密码
+					</a>
+				</li>
+				<li class="list-group-item">
+					<a href="#connection">
+						<i class="fa fa-cogs mr-2" aria-hidden="true"></i> 账号关联
+					</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 </div>
 {{end}}
 {{define "css"}}
-<link href="/static/css/highlight/default.css" media="screen" rel="stylesheet" type="text/css">
-<link href="/static/css/user.css" media="screen" rel="stylesheet" type="text/css">
 {{end}}
 {{define "js"}}
-<script	type="text/javascript" src="/static/js/libs/jquery.autogrowtextarea.min.js"></script>
-<script	type="text/javascript" src="/static/js/libs/jquery.validate.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/jquery.metadata.js"></script>
-<script	type="text/javascript" src="/static/js/libs/jquery.validate.msg.cn.js"></script>
-<script type="text/javascript" src="/static/js/libs/marked.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/highlight.min.js"></script>
-<script type="text/javascript" src="/static/js/libs/plupload.full.min.js"></script>
-<script type="text/javascript" src="/static/js/user.js?v=1.1"></script>
-<script type="text/javascript">
-// 需要加载的侧边栏
-SG.SIDE_BARS = [
-	"/topics/recent",
-	"/resources/recent",
-	"/comments/recent",
-];
 
+{{include "cssjs/publish.js.html" .}}
+<script type="text/javascript" src="{{.static_domain}}/static/dist/js/user.min.js?v=0.1"></script>
+<script type="text/javascript">
 $(function(){
 	// 文本框自动伸缩
 	$('.need-autogrow').autoGrow();
+
+	$('#unbind').submit(function(evt){
+		if ($('input[name=bind_id]:checked').length == 0) {
+			evt.preventDefault();
+			return;
+		}
+	});
 });
 </script>
 {{end}}

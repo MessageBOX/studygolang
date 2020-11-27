@@ -1,6 +1,4 @@
 {{define "title"}}搜索{{end}}
-{{define "seo"}}<meta name="keywords" content="Go语言博客文章, Go语言博文, Go语言, Golang, Go中文社区,Golang中文社区, Go语言社区,Go语言中文网,Go语言学习园地">
-<meta name="description" content="文章来自国内知名网站知名，Go爱好者学习笔记，经验分享；也有爱好者自己的博客文章，以及一些国外精彩文章。">{{end}}
 {{define "content"}}
 <div class="row header_title">
 	<div class="col-lg-12 col-md-12 col-sm-12 search-box">
@@ -40,16 +38,16 @@
 <div class="row">
 	<div class="col-lg-9 col-md-8 col-sm-7 search-result">
 		<div class="box_white result-title">
-			<span class="website">Go语言中文网</span> 为您找到相关结果 <strong class="num">{{.respBody.NumFound}}</strong> 个
+			<span class="website">{{.setting.Name}}</span> 为您找到相关结果 <strong class="num">{{.respBody.NumFound}}</strong> 个
 		</div>
 		{{range .respBody.Docs}}
 		<article class="article box_white">
 			<div class="row">
 				<div>
 					<h2>
-						<a href="/{{if eq .Objtype 0}}topics{{else if eq .Objtype 1}}articles{{else}}resources{{end}}/{{.Objid}}" target="_blank" title="{{.Title}}">{{noescape .HlTitle}}</a></h2>
+						<a href="/{{if eq .Objtype 0}}topics{{else if eq .Objtype 1}}articles{{else if eq .Objtype 2}}resources{{else if eq .Objtype 4}}p{{else}}wiki{{end}}/{{.Objid}}" target="_blank" title="{{.Title}}">{{noescape .HlTitle}}</a></h2>
 					{{if .Content}}
-					<p class="text">{{noescape .HlContent}}<a href="/articles/{{.Objid}}" target="_blank" title="阅读全文">阅读全文</a></p>
+					<p class="text">{{noescape (safeHtml .HlContent)}}<a href="/articles/{{.Objid}}" target="_blank" title="阅读全文">阅读全文</a></p>
 					{{end}}
 				</div>
 			</div>
@@ -142,7 +140,6 @@
 </div>
 {{end}}
 {{define "css"}}
-<link href="/static/css/search.css" rel="stylesheet"/>
 {{end}}
 {{define "js"}}
 <script type="text/javascript">
